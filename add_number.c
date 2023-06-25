@@ -1,4 +1,4 @@
-#include <stdio.hh>
+#include <stdio.h>
 
 /**
  * add_numbers - A function that adds two numbers.
