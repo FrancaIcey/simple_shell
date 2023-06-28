@@ -1,10 +1,10 @@
 #include "shell.h"
 
 /**
- * get_history_file - gets the history file
- * @info: parameter struct
+ * get_history_file - A function to get the history file
+ * @info: Parameter struct
  *
- * Return: allocated string containg history file
+ * Return: allocated string having the history file
  */
 
 char *get_history_file(info_t *info)
@@ -25,8 +25,8 @@ char *get_history_file(info_t *info)
 }
 
 /**
- * write_history - creates a file, or appends to an existing file
- * @info: the parameter struct
+ * write_history - To create a file, or appends to an existing file
+ * @info: Parameter structure
  *
  * Return: 1 on success, else -1
  */
@@ -41,9 +41,12 @@ int write_history(info_t *info)
 
 	fd = open(filename, O_CREAT | O_TRUNC | O_RDWR, 0644);
 	free(filename);
+
 	if (fd == -1)
 		return (-1);
+
 	for (node = info->history; node; node = node->next)
+
 	{
 		_putsfd(node->str, fd);
 		_putfd('\n', fd);
@@ -54,8 +57,8 @@ int write_history(info_t *info)
 }
 
 /**
- * read_history - reads history from file
- * @info: the parameter struct
+ * read_history - to read history from file
+ * @info: parameter structure
  *
  * Return: histcount on success, 0 otherwise
  */
@@ -103,10 +106,10 @@ int read_history(info_t *info)
 }
 
 /**
- * build_history_list - adds entry to a history linked list
+ * build_history_list - Function that adds entry to a history linked list
  * @info: Structure containing potential arguments. Used to maintain
- * @buf: buffer
- * @linecount: the history linecount, histcount
+ * @buf: The buffer
+ * @linecount: history linecount, histcount
  *
  * Return: Always 0
  */
@@ -124,10 +127,10 @@ int build_history_list(info_t *info, char *buf, int linecount)
 }
 
 /**
- * renumber_history - renumbers the history linked list after changes
+ * renumber_history - to renumber history linked list after changes
  * @info: Structure containing potential arguments. Used to maintain
  *
- * Return: the new histcount
+ * Return: new history count
  */
 int renumber_history(info_t *info)
 {
@@ -141,4 +144,3 @@ int renumber_history(info_t *info)
 	}
 	return (info->histcount = i);
 }
-
