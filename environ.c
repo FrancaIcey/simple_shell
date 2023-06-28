@@ -1,94 +1,80 @@
 #include "shell.h"
-
-/**
- * _myenv - prints the current environment
- * @info_1: Structure containing potential arguments. Used to maintain
- * constant function prototype
- * Return: Always 0
- */
-int _myenv(info_t *info_1)
+int _myexit(info_t *info)
 {
-	print_list_str(info_1->env);
-	return (0);
-}
+	int exitcheck;
 
-/**
- * _getenv - gets the value of an environ variable
- * @info_1: Structure containing potential arguments. Used to maintain
- * @name: env var name
- *
- * Return: the value
- */
-char *_getenv(info_t *info_1, const char *name)
-{
-	list_t *node = info_1->env;
-	char *p;
-
-	while (node)
+	if (info->argv[1])
 	{
-		p = starts_with(node->str, name);
-		if (p && *p)
-			return (p);
-		node = node->next;
+		exitcheck = _erratoi(info->argv[1]);
+		if (exitcheck == -1)
+		{
+			info->status = 2;
+			print_error(info, "Illegal number: ");
+			_eputs(info->argv[1]);
+			_eputchar('\n');
+			return (1);
+		}
+		info->err_num = _erratoi(info->argv[1]);
+		return (-2);
 	}
-	return (NULL);
+
+	info->err_num = -1;
+	return (-2);
 }
-
-/**
- * _mysetenv - Initialize a new environment variable,
- *             or modify an existing one
- * @info_1: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
- *  Return: Always 0
- */
-int _mysetenv(info_t *info_1)
+int _mycd(info_t *info)
 {
-	if (info_1->argc != 3)
-	{
-		_eputs("Incorrect number of arguements\n");
-		return (1);
-	}
-	if (_setenv(info_1, info_1->argv[1], info_1->argv[2]))
-		return (0);
-	return (1);
-}
+	char *s, *dir, buffer[1024];
+	int chdir_ret;
 
-/**
- * _myunsetenv - Remove an environment variable
- * @info_1: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
- *  Return: Always 0
- */
-int _myunsetenv(info_t *info_1)
-{
-	int i;
+	s = getcwd(buffer, 1024);
+	if (!s)
+		_puts("TODO: >>getcwd failure emsg here<<\n");
 
-	if (info_1->argc == 1)
+	if (!info->argv[1])
 	{
-		_eputs("Too few arguements.\n");
-		return (1);
+		dir = _getenv(info, "HOME=");
+		if (!dir)
+			chdir_ret = /* TODO: what should this be? */ chdir((dir = _getenv(info, "PWD=")) ? dir : "/");
+		else
+			chdir_ret = chdir(dir);
 	}
-	for (i = 1; i <= info_1->argc; i++)
-		_unsetenv(info_1, info_1->argv[i]);
+	else if (_strcmp(info->argv[1], "-") == 0)
+	{
+		if (!_getenv(info, "OLDPWD="))
+		{
+			_puts(s);
+			_putchar('\n');
+			return 1;
+		}
+		_puts(_getenv(info, "OLDPWD="));
+		_putchar('\n');
+		chdir_ret = /* TODO: what should this be? */ chdir((dir = _getenv(info, "OLDPWD=")) ? dir : "/");
+	}
+	else
+		chdir_ret = chdir(info->argv[1]);
+
+	if (chdir_ret == -1)
+	{
+		print_error(info, "can't cd to ");
+		_eputs(info->argv[1]);
+		_eputchar('\n');
+	}
+	else
+	{
+		_setenv(info, "OLDPWD", _getenv(info, "PWD="));
+		_setenv(info, "PWD", getcwd(buffer, 1024));
+	}
 
 	return (0);
 }
-
-/**
- * populate_env_list - populates env linked list
- * @info_1: Structure containing potential arguments. Used to maintain
- * constant function prototype.
- * Return: Always 0
- */
-int populate_env_list(info_t *info_1)
+int _myhelp(info_t *info)
 {
-	list_t *node = NULL;
-	size_t i;
+	char **arg_array;
 
-	for (i = 0; environ_1[i]; i++)
-	{
-		add_node_end(list_t ** &node, environ[i], 0);
-	info_1->env = node;
+	arg_array = info->argv;
+	_puts("help call works. Function not yet implemented \n");
+	if (0)
+		_puts(*arg_array); /* temp att_unused workaround */
 	return (0);
-	}
 }
+
