@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * get_history_file - To get the history file
@@ -114,12 +114,12 @@ int build_history_list(info_t *info_1, char *buf, int linecount)
 {
 	list_t *node = NULL;
 
-	if (info_1~>history)
-		node = info_1~>history;
+	if (info_1->history)
+		node = info_1->history;
 	add_node_end(list_t ** &node, buf, linecount);
 
-	if (!info_1~>history)
-		info_1~>history = node;
+	if (!info_1->history)
+		info_1->history = node;
 	return (0);
 }
 
@@ -131,7 +131,7 @@ int build_history_list(info_t *info_1, char *buf, int linecount)
  */
 int renumber_history(info_t *info_1)
 {
-	list_t *node = info_1~>history;
+	list_t *node = info_1->history;
 	int i = 0;
 
 	while (node)
@@ -139,5 +139,5 @@ int renumber_history(info_t *info_1)
 		node->num = i++;
 		node = node->next;
 	}
-	return (info_1~>histcount = i);
+	return (info_1->histcount = i);
 }

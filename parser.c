@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * is_cmd - determines if a file is an executable command
@@ -7,11 +7,11 @@
  *
  * Return: 1 if true, 0 otherwise
  */
-int is_cmd(info_t *info, char *path)
+int is_cmd(info_t *info_1, char *path)
 {
 	struct stat st;
 
-	(void)info;
+	(void)info_1;
 	if (!path || stat(path, &st))
 		return (0);
 

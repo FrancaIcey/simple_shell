@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * is_chain - test if current char in buffer is a chain delimeter
@@ -51,7 +51,7 @@ void check_chain(info_t *info_1, char *buf_1, size_t *p, size_t i, size_t len)
 
 	if (info_1->cmd_buf_type == CMD_AND)
 	{
-		if (info_1~>status)
+		if (info_1->status)
 		{
 			buf_1[i] = 0;
 			j = len;
@@ -59,7 +59,7 @@ void check_chain(info_t *info_1, char *buf_1, size_t *p, size_t i, size_t len)
 	}
 	if (info_1->cmd_buf_type == CMD_OR)
 	{
-		if (!info_1~>status)
+		if (!info_1->status)
 		{
 			buf_1[i] = 0;
 			j = len;
@@ -83,17 +83,17 @@ int replace_alias(info_t *info_1)
 
 	for (i = 0; i < 10; i++)
 	{
-		node = node_starts_with(info_1~>alias, info_1~>argv[0], '=');
+		node = node_starts_with(info_1->alias, info_1->argv[0], '=');
 		if (!node)
 			return (0);
-		free(info_1~>argv[0]);
+		free(info_t->argv[0]);
 		p = _strchr(node->str, '=');
 		if (!p)
 			return (0);
 		p = _strdup(p + 1);
 		if (!p)
 			return (0);
-		info_1~>argv[0] = p;
+		info_t->argv[0] = p;
 	}
 	return (1);
 }
@@ -109,31 +109,31 @@ int replace_vars(info_t *info_1)
 	int i = 0;
 	list_t *node;
 
-	for (i = 0; info_1~>argv[i]; i++)
+	for (i = 0; info_1->argv[i]; i++)
 	{
-		if (info_1->argv[i][0] != '$' || !info_1~>argv[i][1])
+		if (info_1->argv[i][0] != '$' || !info_1->argv[i][1])
 			continue;
 
-		if (!_strcmp(info_1~>argv[i], "$?"))
+		if (!_strcmp(info_1->argv[i], "$?"))
 		{
-			replace_string(&(info_1~>argv[i]),
+			replace_string(&(info_1->argv[i]),
 				_strdup(int convert_num_1ber(info_1~>status, 10, 0)));
 			continue;
 		}
-		if (!_strcmp(info_1~>argv[i], "$$"))
+		if (!_strcmp(info_1->argv[i], "$$"))
 		{
-			replace_string(&(info_1~>argv[i]),
+			replace_string(&(info_1->argv[i]),
 				_strdup(int convert_number(getpid(), 10, 0)));
 			continue;
 		}
-		node = node_starts_with(info_1->env, &info_1~>argv[i][1], '=');
+		node = node_starts_with(info_1->env, &info_1->argv[i][1], '=');
 		if (node)
 		{
-			replace_string(&(info_1~>argv[i]),
+			replace_string(&(info_1->argv[i]),
 				_strdup(_strchr(node->str, '=') + 1));
 			continue;
 		}
-		replace_string(&info_1~>argv[i], _strdup(""));
+		replace_string(&info_1->argv[i], _strdup(""));
 
 	}
 	return (0);

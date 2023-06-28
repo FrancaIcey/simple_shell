@@ -1,7 +1,7 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * _erratoi - converts a string to an integer
+ * _erratoi - To convert a string to an integer
  * @s: the string to be converted
  * Return: 0 if no numbers in string, converted number otherwise
  *       -1 on error
@@ -35,13 +35,13 @@ int _erratoi(char *s)
  * Return: 0 if no numbers in string, converted number otherwise
  *        -1 on error
  */
-void print_error(info_t *info, char *estr)
+void print_error(info_t *info_1, char *estr)
 {
-	_eputs(info_1~>fname);
+	_eputs(info_1->fname);
 	_eputs(": ");
-	print_d(info_1~>line_count, STDERR_FILENO);
+	print_d(info_1->line_count, STDERR_FILENO);
 	_eputs(": ");
-	_eputs(info_1~>argv[0]);
+	_eputs(info_1->argv[0]);
 	_eputs(": ");
 	_eputs(estr);
 }
@@ -86,7 +86,7 @@ int print_d(int input, int fd)
 }
 
 /**
- * convert_number - converter function, a clone of itoa
+ * convert_number - A converter function, a clone of itoa
  * @num: number
  * @base: base
  * @flags: argument flags
@@ -111,7 +111,8 @@ char *convert_number(long int num, int base, int flags)
 	ptr = &buffer[49];
 	*ptr = '\0';
 
-	do	{
+	do
+	{
 		*--ptr = array[n % base];
 		n /= base;
 	} while (n != 0);

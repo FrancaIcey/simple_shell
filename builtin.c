@@ -1,19 +1,19 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * _myexit - exits the shell
  * @info_1: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- *  Return: exits with a given exit status
+ * constant function prototype.
+ * Return: exits with a given exit status
  *         (0) if info.argv[0] != "exit"
  */
 int _myexit(info_t *info_1)
 {
 	int exitcheck;
 
-	if (info_1~>argv[1])  /* If there is an exit arguement */
+	if (info_1->argv[1])  /* If there is an exit arguement */
 	{
-		exitcheck = _erratoi(info_1~>argv[1]);
+		exitcheck = _erratoi(info_1->argv[1]);
 		if (exitcheck == -1)
 		{
 			info_1->status = 2;
@@ -32,8 +32,8 @@ int _myexit(info_t *info_1)
 /**
  * _mycd - changes the current directory of the process
  * @info_1: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- *  Return: Always 0
+ * constant function prototype.
+ * Return: Always 0
  */
 int _mycd(info_t *info_1)
 {
@@ -52,7 +52,7 @@ int _mycd(info_t *info_1)
 		else
 			chdir_ret = chdir(dir);
 	}
-	else if (_strcmp(info_1~>argv[1], "-") == 0)
+	else if (_strcmp(info_1->argv[1], "-") == 0)
 	{
 		if (!_getenv(info_1, "OLDPWD="))
 		{
@@ -65,11 +65,11 @@ int _mycd(info_t *info_1)
 			chdir((dir = _getenv(info_1, "OLDPWD=")) ? dir : "/");
 	}
 	else
-		chdir_ret = chdir(info_1~>argv[1]);
+		chdir_ret = chdir(info_1->argv[1]);
 	if (chdir_ret == -1)
 	{
 		print_error(info_1, "can't cd to ");
-		_eputs(info_1~>argv[1]); 
+		_eputs(info_1->argv[1]); 
 		_eputchar('\n');
 	}
 	else
@@ -83,14 +83,14 @@ int _mycd(info_t *info_1)
 /**
  * _myhelp - changes the current directory of the process
  * @info_1: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- *  Return: Always 0
+ * constant function prototype.
+ * Return: Always 0
  */
 int _myhelp(info_t *info_1)
 {
 	char **arg_array;
 
-	arg_array = info_1~>argv;
+	arg_array = info_1->argv;
 	_puts("help call works. Function not yet implemented \n");
 	if (0)
 		_puts(const char *)arg_array; /* temp att_unused workaround */

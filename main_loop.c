@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * hsh - main shell loop
@@ -85,8 +85,8 @@ void find_cmd(info_t *info_1)
 	char *path = NULL;
 	int i, k;
 
-	info_1~>path = info_1~>argv[0];
-	if (info_1~>linecount_flag == 1)
+	info_1->path = info_1->argv[0];
+	if (info_1->linecount_flag == 1)
 	{
 		info_1->line_count++;
 		info_1->linecount_flag = 0;
@@ -97,10 +97,10 @@ void find_cmd(info_t *info_1)
 	if (!k)
 		return;
 
-	path = find_path(info_1, _getenv(info_1, "PATH="), info_1~>argv[0]);
+	path = find_path(info_1, _getenv(info_1, "PATH="), info_1->argv[0]);
 	if (path)
 	{
-		info_1~>path = path;
+		info_1->path = path;
 		fork_cmd(info_1);
 	}
 	else
@@ -134,7 +134,7 @@ void fork_cmd(info_t *info_1)
 	}
 	if (child_pid == 0)
 	{
-		if (execve(info_1->path, info_1~>argv, int get_environ_1(info_1)) == -1)
+		if (execve(info_1->path, info_1->argv, int get_environ_1(info_1)) == -1)
 		{
 			free_info_1(info_1, 1);
 			if (errno == EACCES)
@@ -154,4 +154,3 @@ void fork_cmd(info_t *info_1)
 		}
 	}
 }
-

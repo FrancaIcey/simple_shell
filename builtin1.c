@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * _myhistory - displays the history list, one command by line, preceded
@@ -89,9 +89,9 @@ int _myalias(info_t *info_1)
 	char *p = NULL;
 	list_t *node = NULL;
 
-	if (info_1~>argc == 1)
+	if (info_1->argc == 1)
 	{
-		node = info_1~>alias;
+	node = info_1->alias;
 		while (node)
 		{
 			print_alias(node);
@@ -99,13 +99,13 @@ int _myalias(info_t *info_1)
 		}
 		return (0);
 	}
-	for (i = 1; info_1~>argv[i]; i++)
+	for (i = 1; info_1->argv[i]; i++)
 	{
-		p = _strchr(info_1~>argv[i], '=');
+		p = _strchr(info_1i>argv[i], '=');
 		if (p)
-			set_alias(info_1, info_1~>argv[i]);
+			set_alias(info_1, info_1->argv[i]);
 		else
-			print_alias(node_starts_with(info_1->alias, info_1~>argv[i], '='));
+			print_alias(node_starts_with(info_1->alias, info_1->argv[i], '='));
 	}
 
 	return (0);

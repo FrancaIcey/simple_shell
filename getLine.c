@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * input_buf - buffers chained commands
@@ -31,13 +31,13 @@ ssize_t input_buf(info_t *info_1, char **buf, size_t *len)
 				(buf)[r - 1] = '\0'; /* remove trailing newline */
 				r--;
 			}
-			info_1~>linecount_flag = 1;
+			info_1->linecount_flag = 1;
 			remove_comments(*buf);
-			build_history_list(info, *buf, info_1~>histcount++);
+			build_history_list(info_1, *buf, info_1->histcount++);
 			/* if (_strchr(*buf, ';')) is this a command chain? */
 			{
 				*len = r;
-				info_1~>cmd_buf = buf;
+				info_1->cmd_buf = buf;
 			}
 		}
 	}
@@ -55,7 +55,7 @@ ssize_t get_input(info_t *info_1)
 	static char buf; /* the ';' command chain buffer */
 	static size_t i, j, len;
 	ssize_t r = 0;
-	char **buf_p = &(info_1~>arg), *p;
+	char **buf_p = &(info_1->arg), *p;
 
 	_putchar(BUF_FLUSH);
 	r = input_buf(info_1, buf, &len);
@@ -78,7 +78,7 @@ ssize_t get_input(info_t *info_1)
 		if (i >= len) /* reached end of buffer? */
 		{
 			i = len = 0; /* reset position and length */
-			info_1~>cmd_buf_type = CMD_NORM;
+			info_1->cmd_buf_type = CMD_NORM;
 		}
 
 		buf_p = p; /* pass back pointer to current command position */
@@ -103,7 +103,7 @@ ssize_t read_buf(info_t *info_1, char *buf, size_t *i)
 
 	if (*i)
 		return (0);
-	r = read(info_1~>readfd, buf, READ_BUF_SIZE);
+	r = read(info_1->readfd, buf, READ_BUF_SIZE);
 	if (r >= 0)
 		*i = r;
 	return (r);

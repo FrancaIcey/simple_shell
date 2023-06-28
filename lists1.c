@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * list_len - A function that determines length of linked list

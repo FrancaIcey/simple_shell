@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * main - entry point
@@ -35,7 +35,7 @@ int main(int a_count, char **a_vector)
 			}
 			return (EXIT_FAILURE);
 		}
-		info_1~>readfd_1 = fd_1;
+		info_1->readfd_1 = fd_1;
 	}
 	populate_env_list(info_1);
 	read_history(info_1);
