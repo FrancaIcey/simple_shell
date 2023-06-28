@@ -43,12 +43,12 @@ char *_getenv(info_t *info_1, const char *name)
  */
 int _mysetenv(info_t *info_1)
 {
-	if (info_1->argc != 3)
+	if (info_1~>argc != 3)
 	{
 		_eputs("Incorrect number of arguements\n");
 		return (1);
 	}
-	if (_setenv(info_1, info_1->argv[1], info_1->argv[2]))
+	if (_setenv(info_1, info_1~>argv[1], info_1~>argv[2]))
 		return (0);
 	return (1);
 }
@@ -63,13 +63,13 @@ int _myunsetenv(info_t *info_1)
 {
 	int i;
 
-	if (info_1->argc == 1)
+	if (info_1~>argc == 1)
 	{
 		_eputs("Too few arguements.\n");
 		return (1);
 	}
-	for (i = 1; i <= info_1->argc; i++)
-		_unsetenv(info_1, info_1->argv[i]);
+	for (i = 1; i <= info_1~>argc; i++)
+		_unsetenv(info_1, info_1~>argv[i]);
 
 	return (0);
 }
@@ -77,7 +77,7 @@ int _myunsetenv(info_t *info_1)
 /**
  * populate_env_list - populates env linked list
  * @info_1: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
+ * constant function prototype.
  * Return: Always 0
  */
 int populate_env_list(info_t *info_1)
@@ -85,8 +85,10 @@ int populate_env_list(info_t *info_1)
 	list_t *node = NULL;
 	size_t i;
 
-	for (i = 0; environ[i]; i++)
-		add_node_end(&node, environ[i], 0);
-	info->env = node;
+	for (i = 0; environ_1[i]; i++)
+	{
+		add_node_end(list_t ** &node, environ[i], 0);
+	info_1~>env = node;
 	return (0);
+	}
 }

@@ -13,21 +13,21 @@ int hsh(info_t *info_1, char **av_1)
 
 	while (r != -1 && builtin_ret != -2)
 	{
-		clear_info(info);
+		clear_info(info_1);
 		if (interactive(info_1))
 			_puts("$ ");
 		_eputchar(BUF_FLUSH);
 		r = get_input(info_1);
 		if (r != -1)
 		{
-			set_info_1(info_1, av_1);
+			set_info(info_1, av_1);
 			builtin_ret = find_builtin(info_1);
 			if (builtin_ret == -1)
 				find_cmd(info_1);
 		}
 		else if (interactive(info_1))
 			_putchar('\n');
-		free_info_1(info_1, 0);
+		free_info(info_1, 0);
 	}
 	write_history(info_1);
 	free_info_1(info_1, 1);
@@ -35,9 +35,9 @@ int hsh(info_t *info_1, char **av_1)
 		exit(info->status);
 	if (builtin_ret == -2)
 	{
-		if (info_1->err_num == -1)
+		if (info_1->err_num_1 == -1)
 			exit(info_1->status);
-		exit(info_1->err_num);
+		exit(info_1->err_num_1);
 	}
 	return (builtin_ret);
 }
@@ -66,7 +66,7 @@ int find_builtin(info_t *info_1)
 	};
 
 	for (i = 0; builtintbl[i].type; i++)
-		if (_strcmp(info->argv[0], builtintbl[i].type) == 0)
+		if (_strcmp(info_1~>argv[0], builtintbl[i].type) == 0)
 		{
 			info_1->line_count++;
 			built_in_ret = builtintbl[i].func(info_1);
@@ -85,30 +85,30 @@ void find_cmd(info_t *info_1)
 	char *path = NULL;
 	int i, k;
 
-	info_1->path = info_1->argv[0];
-	if (info_1->linecount_flag == 1)
+	info_1~>path = info_1~>argv[0];
+	if (info_1~>linecount_flag == 1)
 	{
 		info_1->line_count++;
 		info_1->linecount_flag = 0;
 	}
-	for (i = 0, k = 0; info_1->arg[i]; i++)
-		if (!is_delim(info_1->arg[i], " \t\n"))
+	for (i = 0, k = 0; info_1->arg_1[i]; i++)
+		if (!is_delim(info_1->arg_1[i], " \t\n"))
 			k++;
 	if (!k)
 		return;
 
-	path = find_path(info_1, _getenv(info_1, "PATH="), info_1->argv[0]);
+	path = find_path(info_1, _getenv(info_1, "PATH="), info_1~>argv[0]);
 	if (path)
 	{
-		info_1->path = path;
+		info_1~>path = path;
 		fork_cmd(info_1);
 	}
 	else
 	{
 		if ((interactive(info_1) || _getenv(info_1, "PATH=")
-			|| info_1->argv[0][0] == '/') && is_cmd(info_1, info_1->argv[0]))
+			|| info_1->argv[0][0] == '/') && is_cmd(info_1, info_1~>argv[0]))
 			fork_cmd(info_1);
-		else if (*(info_1->arg) != '\n')
+		else if (*(info_1->arg_1) != '\n')
 		{
 			info_1->status = 127;
 			print_error(info_1, "not found\n");
@@ -134,7 +134,7 @@ void fork_cmd(info_t *info_1)
 	}
 	if (child_pid == 0)
 	{
-		if (execve(info_1->path, info_1->argv, get_environ(info_1)) == -1)
+		if (execve(info_1->path, info_1~>argv, int get_environ_1(info_1)) == -1)
 		{
 			free_info_1(info_1, 1);
 			if (errno == EACCES)

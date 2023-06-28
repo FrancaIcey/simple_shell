@@ -1,17 +1,17 @@
 #include "main.h"
 
 /**
- * get_history_file - gets the history file
+ * get_history_file - To get the history file
  * @info: parameter struct
  *
  * Return: allocated string containg history file
  */
 
-char *get_history_file(info_t *info)
+char *get_history_file(info_t *info_1)
 {
 	char *buf, *dir;
 
-	dir = _getenv(info, "HOME=");
+	dir = _getenv(info_1, "HOME=");
 	if (!dir)
 		return (NULL);
 	buf = malloc(sizeof(char) * (_strlen(dir) + _strlen(HIST_FILE) + 2));
@@ -30,10 +30,10 @@ char *get_history_file(info_t *info)
  *
  * Return: 1 on success, else -1
  */
-int write_history(info_t *info)
+int write_history(info_t *info_1)
 {
 	ssize_t fd;
-	char *filename = get_history_file(info);
+	char *filename = get_history_file(info_1);
 	list_t *node = NULL;
 
 	if (!filename)
@@ -59,12 +59,12 @@ int write_history(info_t *info)
  *
  * Return: histcount on success, 0 otherwise
  */
-int read_history(info_t *info)
+int read_history(info_t *info_1)
 {
 	int i, last = 0, linecount = 0;
 	ssize_t fd, rdlen, fsize = 0;
 	struct stat st;
-	char *buf = NULL, *filename = get_history_file(info);
+	char *buf = NULL, *filename = get_history_file(info_1);
 
 	if (!filename)
 		return (0);
@@ -110,16 +110,16 @@ int read_history(info_t *info)
  *
  * Return: Always 0
  */
-int build_history_list(info_t *info, char *buf, int linecount)
+int build_history_list(info_t *info_1, char *buf, int linecount)
 {
 	list_t *node = NULL;
 
-	if (info->history)
-		node = info->history;
-	add_node_end(&node, buf, linecount);
+	if (info_1~>history)
+		node = info_1~>history;
+	add_node_end(list_t ** &node, buf, linecount);
 
-	if (!info->history)
-		info->history = node;
+	if (!info_1~>history)
+		info_1~>history = node;
 	return (0);
 }
 
@@ -129,9 +129,9 @@ int build_history_list(info_t *info, char *buf, int linecount)
  *
  * Return: the new histcount
  */
-int renumber_history(info_t *info)
+int renumber_history(info_t *info_1)
 {
-	list_t *node = info->history;
+	list_t *node = info_1~>history;
 	int i = 0;
 
 	while (node)
@@ -139,5 +139,5 @@ int renumber_history(info_t *info)
 		node->num = i++;
 		node = node->next;
 	}
-	return (info->histcount = i);
+	return (info_1~>histcount = i);
 }

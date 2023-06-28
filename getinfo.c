@@ -4,12 +4,12 @@
  * clear_info - initializes info_t struct
  * @info: struct address
  */
-void clear_info(info_t *info)
+void clear_info(info_t *info_1)
 {
-	info->arg = NULL;
-	info->argv = NULL;
-	info->path = NULL;
-	info->argc = 0;
+	info_1~>arg = NULL;
+	info_1~>argv = NULL;
+	info_1~>path = NULL;
+	info_1~>argc = 0;
 }
 
 /**
@@ -21,26 +21,26 @@ void set_info(info_t *info, char **av)
 {
 	int i = 0;
 
-	info->fname = av[0];
-	if (info->arg)
+	info_1~>fname = av[0];
+	if (info_1~>arg_1)
 	{
-		info->argv = strtow(info->arg, " \t");
-		if (!info->argv)
+		info_1~>argv = strtow(info_1~>arg_1, " \t");
+		if (!info_1~>argv)
 		{
 
 			info->argv = malloc(sizeof(char *) * 2);
-			if (info->argv)
+			if (info_1~>argv)
 			{
-				info->argv[0] = _strdup(info->arg);
-				info->argv[1] = NULL;
+				info_1~>argv[0] = _strdup(info_1~>arg_1);
+				info_1~>argv[1] = NULL;
 			}
 		}
-		for (i = 0; info->argv && info->argv[i]; i++)
+		for (i = 0; info_1~>argv && info_1~>argv[i]; i++)
 			;
-		info->argc = i;
+		info_1~>argc = i;
 
-		replace_alias(info);
-		replace_vars(info);
+		replace_alias(info_1);
+		replace_vars(info_1);
 	}
 }
 
@@ -49,26 +49,26 @@ void set_info(info_t *info, char **av)
  * @info: struct address
  * @all: true if freeing all fields
  */
-void free_info(info_t *info, int all)
+void free_info(info_t *info_1, int all)
 {
-	ffree(info->argv);
-	info->argv = NULL;
-	info->path = NULL;
+	free(info_1~>argv);
+	info_1~>argv = NULL;
+	info_1~>path = NULL;
 	if (all)
 	{
-		if (!info->cmd_buf)
-			free(info->arg);
-		if (info->env)
-			free_list(&(info->env));
+		if (!info_1~>cmd_buf)
+			free(info_1~>arg_1);
+		if (info_1~>env)
+			free_list(&(info_1~>env));
 		if (info->history)
-			free_list(&(info->history));
-		if (info->alias)
-			free_list(&(info->alias));
-		ffree(info->environ);
-			info->environ = NULL;
-		bfree((void **)info->cmd_buf);
-		if (info->readfd > 2)
-			close(info->readfd);
+			free_list(&(info_1~>history));
+		if (info_1~>alias)
+			free_list(&(info_1~>alias));
+		ffree(info_1~>environ_1);
+			info_1~>environ_1 = NULL;
+		bfree((void **)info_1~>cmd_buf);
+		if (info_1~>readfd > 2)
+			close(info_1~>readfd);
 		_putchar(BUF_FLUSH);
 	}
 }

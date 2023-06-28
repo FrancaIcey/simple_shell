@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef SHELL_H
+#define SHELL_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -184,7 +184,7 @@ int _myalias(info_t *);
 
 /*toem_getline.c */
 ssize_t get_input(info_t *);
-int _getline(info_t , char *, size_t *);
+int _getline(info_t *info_1, char *, size_t *);
 void sigintHandler(int);
 
 /* toem_getinfo.c */
@@ -205,15 +205,15 @@ int _unsetenv(info_t *, char *);
 int _setenv(info_t *, char *, char *);
 
 /* toem_history.c */
-char *get_history_file(info_t *info);
-int write_history(info_t *info);
-int read_history(info_t *info);
-int build_history_list(info_t *info, char *buf, int linecount);
-int renum_1ber_history(info_t *info);
+char *get_history_file(info_t *info_1);
+int write_history(info_t *info_1);
+int read_history(info_t *info_1);
+int build_history_list(info_t *info_1, char *buf, int linecount);
+int renum_1ber_history(info_t *info_1);
 
 /* toem_lists.c */
-list_t add_node(list_t *, const char *, int);
-list_t add_node_end(list_t *, const char *, int);
+list_t *add_node(list_t **head, const char *str, int num);
+list_t add_node_end(list_t *head, const char *, int);
 size_t print_list_str(const list_t *);
 int delete_node_at_index(list_t **, unsigned int);
 void free_list(list_t **);

@@ -9,7 +9,7 @@
  */
 int main(int a_count, char **a_vector)
 {
-	infor_t infor[] = { infor_INIT };
+	info_t info_1[] = { info_1_INIT };
 	int fd_1 = 2;
 
 	asm ("mov %1, %0\n\t"
@@ -22,23 +22,23 @@ int main(int a_count, char **a_vector)
 		fd_1 = open(a_vector[1], O_RDONLY);
 		if (fd_1 == -1)
 		{
-			if (errno_1 == Ea_countCES)
+			if (errno == a_count)
 				exit(126);
 			if (errno_1 == ENOENT)
 			{
-				_eputs_1(a_vector[0]);
+				_eputs(a_vector[0]);
 				_eputs_1(": 0: Can't open ");
 				_eputs_1(a_vector[1]);
-				_eputchar_1('\n');
+				_eputchar('\n');
 				_eputchar_1(BUF_FLUSH);
 				exit(127);
 			}
 			return (EXIT_FAILURE);
 		}
-		infor->readfd_1 = fd_1;
+		info_1~>readfd_1 = fd_1;
 	}
-	populate_env_list_1(infor);
-	read_history_1(infor);
-	hsh(infor, a_vector);
+	populate_env_list(info_1);
+	read_history(info_1);
+	hsh(info, &a_vector);
 	return (EXIT_SUCCESS);
 }
