@@ -1,140 +1,104 @@
-#include "shell.h"
-
+#include "main.h"
 /**
- * _erratoi - A function to convert a string to an integer
- * @s: the string to be converted
- * Return: 0 if no numbers in string, converted number otherwise
- *       -1 on error
+ * error_404 - generates a generic error message for "command not found".
+ * @data_sh: data relevant to the shell (counter, arguments).
+ * Return: Error message.
  */
-int _erratoi(char *s)
+char *error_404(shll_comm *data_sh)
 {
-	int i = 0;
-	unsigned long int result = 0;
+	char *err, *vstr;
+	int length;
 
-	if (*s == '+')
-		s++;  /* TODO: why does this make main return 255? */
-	for (i = 0;  s[i] != '\0'; i++)
+	vstr = conv_itoa(data_sh->counter);
+	length = _strlen(data_sh->argv[0]) + _strlen(vstr);
+	length += _strlen(data_sh->args[0]) + 16;
+	err = malloc(sizeof(char) * (length + 1));
+	if (err == 0)
 	{
-		if (s[i] >= '0' && s[i] <= '9')
-		{
-			result *= 10;
-			result += (s[i] - '0');
-			if (result > INT_MAX)
-				return (-1);
-		}
-		else
-			return (-1);
+		free(err);
+		free(vstr);
+		return (NULL);
 	}
-	return (result);
+	_strcpy(err, data_sh->argv[0]);
+	_strcat(err, ": ");
+	_strcat(err, vstr);
+	_strcat(err, ": ");
+	_strcat(err, data_sh->args[0]);
+	_strcat(err, ": not found\n");
+	_strcat(err, "\0");
+	free(vstr);
+
+	return (err);
 }
 
 /**
- * print_error - To print an error message
- * @info: Parameter & return info struct
- * @estr: string containing specified error type
- * Return: 0 if no numbers in string, converted number otherwise
- *        -1 on error
+ * err_shell_exit - to generate a generic error message for
+ *                  "exit" command in get_exit.
+ * @data_sh: data relevant to the shell (counter, arguments).
+ * Return: Error message.
  */
-void print_error(info_t *info, char *estr)
+char *err_shell_exit(shll_comm *data_sh)
 {
-	_eputs(info->fname);
-	_eputs(": ");
-	print_d(info->line_count, STDERR_FILENO);
-	_eputs(": ");
-	_eputs(info->argv[0]);
-	_eputs(": ");
-	_eputs(estr);
-}
+	char *err, *vstr;
+	int length;
 
-/**
- * print_d - Function to prints a decimal (integer) number (base 10)
- * @input: the input
- * @fd: the filedescriptor to write to
- *
- * Return: Characters printed
- */
-int print_d(int input, int fd)
-{
-	int (*__putchar)(char) = _putchar;
-	int i, count = 0;
-	unsigned int _abs_, current;
-
-	if (fd == STDERR_FILENO)
-		__putchar = _eputchar;
-	if (input < 0)
+	vstr = conv_itoa(data_sh->counter);
+	length = _strlen(data_sh->argv[0]) + _strlen(vstr);
+	length += _strlen(data_sh->args[0]) + _strlen(data_sh->args[1]) + 23;
+	err = malloc(sizeof(char) * (length + 1));
+	if (err == 0)
 	{
-		_abs_ = -input;
-		__putchar('-');
-		count++;
+		free(vstr);
+		return (NULL);
+	}
+	_strcpy(err, data_sh->argv[0]);
+	_strcat(err, ": ");
+	_strcat(err, vstr);
+	_strcat(err, ": ");
+	_strcat(err, data_sh->args[0]);
+	_strcat(err, ": Illegal number: ");
+	_strcat(err, data_sh->args[1]);
+	_strcat(err, "\n\0");
+	free(vstr);
+
+	return (err);
+}
+
+/**
+ * err_gcd - to generate an error message for the 'cd' command in get_cd.
+ * @data_sh: data relevant to the shell (directory).
+ * Return: The error message.
+ */
+char *err_gcd(shll_comm *data_sh)
+{
+	char *err, *vstr, *errmsg;
+	int len, lenid;
+
+	vstr = conv_itoa(data_sh->counter);
+	if (data_sh->args[1][0] == '-')
+	{
+		errmsg = ": Illegal option ";
+		lenid = 2;
 	}
 	else
-		_abs_ = input;
-	current = _abs_;
-	for (i = 1000000000; i > 1; i /= 10)
 	{
-		if (_abs_ / i)
-		{
-			__putchar('0' + current / i);
-			count++;
-		}
-		current %= i;
+		errmsg = ": can't cd to ";
+		lenid = _strlen(data_sh->args[1]);
 	}
-	__putchar('0' + current);
-	count++;
 
-	return (count);
-}
+	len = _strlen(data_sh->argv[0]) + _strlen(data_sh->args[0]);
+	len += _strlen(vstr) + _strlen(errmsg) + lenid + 5;
+	err = malloc(sizeof(char) * (len + 1));
 
-/**
- * convert_number - A converter function, a clone of itoa
- * @num: The number
- * @base: The base
- * @flags: The argument flags
- *
- * Return: str
- */
-char *convert_number(long int num, int base, int flags)
-{
-	static char *array;
-	static char buffer[50];
-	char sign = 0;
-	char *ptr;
-	unsigned long n = num;
-
-	if (!(flags & CONVERT_UNSIGNED) && num < 0)
+	if (err == 0)
 	{
-		n = -num;
-		sign = '-';
-
+		free(vstr);
+		return (NULL);
 	}
-	array = flags & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
-	ptr = &buffer[49];
-	*ptr = '\0';
 
-	do	{
-		*--ptr = array[n % base];
-		n /= base;
-	} while (n != 0);
+	err = conc_err_msg(data_sh, errmsg, err, vstr);
 
-	if (sign)
-		*--ptr = sign;
-	return (ptr);
-}
+	free(vstr);
 
-/**
- * remove_comments - A function to replace first instance of '#' with '\0'
- * @buf: string to modify
- *
- * Return: Always 0;
- */
-void remove_comments(char *buf)
-{
-	int i;
-
-	for (i = 0; buf[i] != '\0'; i++)
-		if (buf[i] == '#' && (!i || buf[i - 1] == ' '))
-		{
-			buf[i] = '\0';
-			break;
-		}
+	return (err);
 }

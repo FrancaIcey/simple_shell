@@ -1,92 +1,158 @@
-#include "shell.h"
-
+#include "main.h"
 /**
- * _myenv - To print current environment
- * @info: Structure containing potential arguments. Used to maintain
- * constant function prototype.
- * Return: Always 0
+ * verify_env - To check if the typed variable is an environment variable.
+ * @hd: Head of the linked list.
+ * @inp: Input str.
+ * @shell_data: Data structure.
+ * Return: No return.
  */
-int _myenv(info_t *info)
+void verify_env(r_var **hd, char *inp, shll_comm *shell_data)
 {
-	print_list_str(info->env);
-	return (0);
+	int line, charc, i, left_value;
+	char **_env;
+
+	_env = shell_data->_env;
+	for (line = 0; _env[line]; line++)
+	{
+		for (i = 1, charc = 0; _env[line][charc]; charc++)
+		{
+			if (_env[line][charc] == '=')
+			{
+				left_value = _strlen(_env[line] + charc + 1);
+				add_var_nd(hd, i, _env[line] + charc + 1, left_value);
+				return;
+			}
+
+			if (inp[i] == _env[line][charc])
+				i++;
+			else
+				break;
+		}
+	}
+
+	for (i = 0; inp[i]; i++)
+	{
+		if (inp[i] == ' ' || inp[i] == '\t' || inp[i] == ';' || inp[i] == '\n')
+			break;
+	}
+
+	add_var_nd(hd, i, NULL, 0);
 }
 
 /**
- * _getenv - To get the value of an environ var
- * @info: Structure containing potential arguments. Used to maintain
- * @name: environ variable name
+ * rpl_inp - To replace variables in the input string.
+ * @hd: Head of the linked list.
+ * @inp: Input string.
+ * @new_inp: New input string (replaced).
+ * @numlen: New length.
  *
- * Return: Value
+ * Return: Replaced string.
  */
-char *_getenv(info_t *info, const char *name)
+char *rpl_inp(r_var **hd, char *inp, char *new_inp, int numlen)
 {
-	list_t *node = info->env;
-	char *p;
+	r_var *index;
+	int i, l, m;
 
-	while (node)
+	index = *hd;
+	for (l = i = 0; i < numlen; i++)
 	{
-		p = starts_with(node->str, name);
-		if (p && *p)
-			return (p);
-		node = node->next;
+		if (inp[l] == '$')
+		{
+			if (!(index->len_var) && !(index->len_val))
+			{
+				new_inp[i] = inp[l];
+				l++;
+			}
+			else if (index->len_var && !(index->len_val))
+			{
+				for (m = 0; m < index->len_var; m++)
+					l++;
+				i--;
+			}
+			else
+			{
+				for (m = 0; m < index->len_val; m++)
+				{
+					new_inp[i] = index->val[m];
+					i++;
+				}
+				l += (index->len_var);
+				i--;
+			}
+			index = index->next;
+		}
+		else
+		{
+			new_inp[i] = inp[l];
+			l++;
+		}
 	}
-	return (NULL);
+
+	return (new_inp);
 }
 
 /**
- * _mysetenv - To initialize a new environment variable,
- * or modify an existing one
- * @info: Structure containing potential arguments. Used to maintain
- * constant function prototype.
- * Return: Always 0
+ * verify_vars - Check if the typed variable is $$ or $?
+ * @header: Head of the linked list.
+ * @inp: Input string.
+ * @str: Last status of the shell.
+ * @datashell: Data structure.
+ *
+ * Return: Number of characters processed.
  */
-int _mysetenv(info_t *info)
+int verify_vars(r_var **header, char *inp, char *str, shll_comm *datashell)
 {
-	if (info->argc != 3)
+	int i, leftst, leftpd;
+
+	leftst = _strlen(str);
+	leftpd = _strlen(datashell->pid);
+
+	for (i = 0; inp[i]; i++)
 	{
-		_eputs("Incorrect number of arguements\n");
-		return (1);
+		if (inp[i] == '$')
+		{
+			if (inp[i + 1] == '?')
+				add_var_nd(header, 2, str, leftst), i++;
+			else if (inp[i + 1] == '$')
+				add_var_nd(header, 2, datashell->pid, leftpd), i++;
+			else if (inp[i + 1] == '\n')
+				add_var_nd(header, 0, NULL, 0);
+			else if (inp[i + 1] == '\0')
+				add_var_nd(header, 0, NULL, 0);
+			else if (inp[i + 1] == ' ')
+				add_var_nd(header, 0, NULL, 0);
+			else if (inp[i + 1] == '\t')
+				add_var_nd(header, 0, NULL, 0);
+			else if (inp[i + 1] == ';')
+				add_var_nd(header, 0, NULL, 0);
+			else
+				verify_env(header, inp + i, datashell);
+		}
 	}
-	if (_setenv(info, info->argv[1], info->argv[2]))
-		return (0);
-	return (1);
+
+	return (i);
 }
 
 /**
- * _myunsetenv - To remove an environment variable
- * @info: Structure containing potential arguments. Used to maintain
- * constant function prototype.
- * Return: Always 0
+ * compare_envname - To compare name of an environ
+ * variable with a given name.
+ * @name_env: Name of the environment variable.
+ * @name_ptr: Name to compare against.
+ *
+ * Return: 0 if the names are not equal. A value
+ * greater than 0 if they are equal.
  */
-int _myunsetenv(info_t *info)
+int compare_envname(const char *name_env, const char *name_ptr)
 {
-	int i;
+	int index;
 
-	if (info->argc == 1)
+	for (index = 0; name_env[index] != '='; index++)
 	{
-		_eputs("Too few arguements.\n");
-		return (1);
+		if (name_env[index] != name_ptr[index])
+		{
+			return (0);
+		}
 	}
-	for (i = 1; i <= info->argc; i++)
-		_unsetenv(info, info->argv[i]);
 
-	return (0);
-}
-
-/**
- * populate_env_list - To populate environment linked list
- * @info: Structure containing potential arguments. Used to maintain
- * constant function prototype.
- * Return: Always 0
- */
-int populate_env_list(info_t *info)
-{
-	list_t *node = NULL;
-	size_t i;
-
-	for (i = 0; environ[i]; i++)
-		add_node_end(&node, environ[i], 0);
-	info->env = node;
-	return (0);
+	return (index + 1);
 }
