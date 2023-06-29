@@ -1,82 +1,94 @@
-#include "shell.h"
+#include "main.h"
 /**
- * _strcpy - to copies a string
- * @dest: the destination
- * @src: the source
- * Return: pointer to destination
+ * conv_itoa - to convert an integer to a string.
+ * @number: The integer number to convert.
+ * Return: The string representation of the integer.
  */
-char *_strcpy(char *dest, char *src)
+char *conv_itoa(int number)
 {
-	int i = 0;
+	unsigned int n1;
+	int len = get_length(number);
+	char *buff;
 
-	if (dest == src || src == 0)
-		return (dest);
-	while (src[i])
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = 0;
-	return (dest);
-}
-
-/**
- * _strdup - a function that duplicates a string
- * @str: the string to duplicate
- * Return: pointer to the duplicated string
- */
-char *_strdup(const char *str)
-{
-	int length = 0;
-	char *ret;
-
-	if (str == NULL)
+	buff = malloc(sizeof(char) * (len + 1));
+	if (buff == 0)
 		return (NULL);
-	while (*str++)
-		length++;
-	ret = malloc(sizeof(char) * (length + 1));
-	if (!ret)
-		return (NULL);
-	for (length++; length--;)
-		ret[length] = *--str;
-	return (ret);
+
+	*(buff + len) = '\0';
+
+	if (number < 0)
+	{
+		n1 = number * -1;
+		buff[0] = '-';
+	}
+	else
+		n1 = number;
+
+	len--;
+	do {
+		*(buff + len) = (n1 % 10) + '0';
+		n1 = n1 / 10;
+		len--;
+	} while (n1 > 0);
+	return (buff);
 }
 
 /**
- *_puts - prints an input string
- *@str: the string to be printed
- * Return: Nothing
+ * get_length - to get the length of a number
+ * @number: The number for which to calculate the length
+ * Return: number length
  */
-void _puts(char *str)
+int get_length(int number)
 {
-	int i = 0;
+	unsigned int n1;
+	int lenght = 1;
 
-	if (!str)
-		return;
-	while (str[i] != '\0')
+	if (number < 0)
 	{
-		_putchar(str[i]);
-		i++;
+		lenght++;
+		n1 = number * -1;
 	}
+	else
+		n1 = number;
+	while (n1 > 9)
+	{
+		lenght++;
+		n1 = n1 / 10;
+	}
+
+	return (lenght);
 }
 
 /**
- * _putchar - a function that writes the character c to stdout
- * @c: The character to print
- * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
+ * _atoi - to convert string to an integer.
+ * @str: Input string.
+ * Return: The converted integer.
  */
-int _putchar(char c)
+int _atoi(char *str)
 {
-	static int i;
-	static char buf[WRITE_BUF_SIZE];
+	unsigned int counter = 0, size = 0, oi = 0, pn = 1, m = 1, i;
 
-	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	while (*(str + counter) != '\0')
 	{
-		write(1, buf, i);
-		i = 0;
+		if (size > 0 && (*(str + counter) < '0' || *(str + counter) > '9'))
+			break;
+
+		if (*(str + counter) == '-')
+			pn *= -1;
+
+		if ((*(str + counter) >= '0') && (*(str + counter) <= '9'))
+		{
+			if (size > 0)
+				m *= 10;
+			size++;
+		}
+		counter++;
 	}
-	if (c != BUF_FLUSH)
-		buf[i++] = c;
-	return (1);
+
+	for (i = counter - size; i < counter; i++)
+	{
+		oi = oi + ((*(str + i) - 48) * m);
+		m /= 10;
+	}
+	return (oi * pn);
 }
