@@ -1,70 +1,84 @@
-#include "shell.h"
+#include "main.h"
 /**
- * _strlen - returns the length of a string
- * @s: the string whose length to check
- * Return: integer length of string
+ * _memcpy - to copy a block of memory from the source
+ * pointer to the destination pointer.
+ * @new_pointer: The destination pointer.
+ * @pointer: The source pointer.
+ * @s: The size of the new pointer
+ * Return: None.
  */
-int _strlen(char *s)
+void _memcpy(void *new_pointer, const void *pointer, unsigned int s)
 {
-	int i = 0;
+	char *char_ptr = (char *)pointer;
+	char *char_newptr = (char *)new_pointer;
+	unsigned int i;
 
-	if (!s)
-		return (0);
-
-	while (*s++)
-		i++;
-	return (i);
+	for (i = 0; i < s; i++)
+		char_newptr[i] = char_ptr[i];
 }
 
 /**
- * _strcmp - performs lexicogarphic comparison of two strangs.
- * @s1: the first strang
- * @s2: the second strang
- * Return: negative if s1 < s2, positive if s1 > s2, zero if s1 == s2
+ * _realloc - to reallocate a memory block with a new size.
+ * @pointer: Pointer to the memory previously allocated.
+ * @old_s: Size, in bytes, of the allocated space for ptr.
+ * @new_s: New size, in bytes, of the reallocated memory block.
+ * Return: Pointer to the reallocated memory block (ptr).
  */
-int _strcmp(char *s1, char *s2)
+void *_realloc(void *pointer, unsigned int old_s, unsigned int new_s)
 {
-	while (*s1 && *s2)
+	void *newptr;
+
+	if (pointer == NULL)
+		return (malloc(new_s));
+
+	if (new_s == 0)
 	{
-		if (*s1 != *s2)
-			return (*s1 - *s2);
-		s1++;
-		s2++;
+		free(pointer);
+		return (NULL);
 	}
-	if (*s1 == *s2)
-		return (0);
+
+	if (new_s == old_s)
+		return (pointer);
+
+	newptr = malloc(new_s);
+	if (newptr == NULL)
+		return (NULL);
+
+	if (new_s < old_s)
+		_memcpy(newptr, pointer, new_s);
 	else
-		return (*s1 < *s2 ? -1 : 1);
+		_memcpy(newptr, pointer, old_s);
+
+	free(pointer);
+	return (newptr);
 }
 
 /**
- * starts_with - checks if needle starts with haystack
- * @haystack: string to search
- * @needle: the substring to find
- * Return: address of next char of haystack or NULL
+ * _reallocdp - Reallocates a memory block of a double pointer.
+ * @pointer: Double pointer to the memory previously allocated.
+ * @old_s: Size, in bytes, of the allocated space for pointer.
+ * @new_s: New size, in bytes, of the reallocated memory block.
+ * Return: Pointer to the reallocated memory block (pointer).
  */
-char *starts_with(const char *haystack, const char *needle)
+char **_reallocdp(char **pointer, unsigned int old_s, unsigned int new_s)
 {
-	while (*needle)
-		if (*needle++ != *haystack++)
-			return (NULL);
-	return ((char *)haystack);
-}
+	char **newptr;
+	unsigned int i;
 
-/**
- * _strcat - concatenates two strings
- * @dest: the destination buffer
- * @src: the source buffer
- * Return: pointer to destination buffer
- */
-char *_strcat(char *dest, char *src)
-{
-	char *ret = dest;
+	if (pointer == NULL)
+		return (malloc(sizeof(char *) * new_s));
 
-	while (*dest)
-		dest++;
-	while (*src)
-		*dest++ = *src++;
-	*dest = *src;
-	return (ret);
+	if (new_s == old_s)
+		return (pointer);
+
+	newptr = malloc(sizeof(char *) * new_s);
+	if (newptr == NULL)
+		return (NULL);
+
+	for (i = 0; i < old_s; i++)
+		newptr[i] = pointer[i];
+
+	free(pointer);
+
+	return (newptr);
 }
